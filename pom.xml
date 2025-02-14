@@ -12,6 +12,7 @@
     <maven.compiler.release>21</maven.compiler.release>
     <javafx.plugin.version>0.0.8</javafx.plugin.version>
     <main.class>com.example.App</main.class>
+    <artifactName>myapp</artifactName>
   </properties>
   <dependencies>
     <dependency>
@@ -23,11 +24,6 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>${javafx.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>12.0.2</version>
     </dependency>
   </dependencies>
   <build>
@@ -50,8 +46,8 @@
           <noHeaderFiles>true</noHeaderFiles>
           <noManPages>true</noManPages>
           <mainClass>${main.class}</mainClass>
-          <launcher>${artifactId}</launcher>
-          <jlinkImageName>${artifactId}</jlinkImageName>
+          <launcher>${artifactName}</launcher>
+          <jlinkImageName>${artifactName}</jlinkImageName>
         </configuration>
       </plugin>
     </plugins>
