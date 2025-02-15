@@ -2,17 +2,16 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example</groupId>
-  <artifactId>myapp</artifactId>
+  <groupId>com.sosuisha</groupId>
+  <artifactId>jfx-sss-fxml</artifactId>
   <version>1.0-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>23.0.2</javafx.version>
-    <!-- JavaFX 23 requires JDK 21 or Later -->
-    <maven.compiler.release>21</maven.compiler.release>
     <javafx.plugin.version>0.0.8</javafx.plugin.version>
-    <main.class>com.example.App</main.class>
-    <artifactName>myapp</artifactName>
+    <!-- Note: JavaFX 23 requires JDK 21 or Later -->
+    <javafx.version>23.0.2</javafx.version>
+    <maven.compiler.release>21</maven.compiler.release>
+    <main.class>com.sosuisha.App</main.class>
   </properties>
   <dependencies>
     <dependency>
@@ -36,7 +35,7 @@
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
-        <version>0.0.8</version>
+        <version>${javafx.plugin.version}</version>
         <configuration>
           <!-- run 'mvn javafx:jlink' to create launcher.
             Exec ./target/myapp/bin/myapp to launch the app.
@@ -46,8 +45,8 @@
           <noHeaderFiles>true</noHeaderFiles>
           <noManPages>true</noManPages>
           <mainClass>${main.class}</mainClass>
-          <launcher>${artifactName}</launcher>
-          <jlinkImageName>${artifactName}</jlinkImageName>
+          <launcher>${project.artifactId}</launcher>
+          <jlinkImageName>${project.artifactId}</jlinkImageName>
         </configuration>
       </plugin>
     </plugins>
