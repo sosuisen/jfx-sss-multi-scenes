@@ -44,9 +44,23 @@ public class MavenArchetypeRunner {
             int exitCode = process.waitFor();
             System.out.println(command.toString() + " has been done. Exit code: " + exitCode);
 
-            // プロセスの生成結果を読み込む。
+            // 生成結果を修正
+            // project/target/generated-sources/archetype/pom.xml
+            // アーキタイプ名の末尾に -archetype と付くのを削除
+            File archetypePomFile = new File(projectDir,
+                    "target/generated-sources/archetype/pom.xml");
+            if (archetypePomFile.exists()) {
+                String content = Files.readString(archetypePomFile.toPath());
+                content = content.replaceAll("<artifactId>([^<]+)-archetype</artifactId>",
+                        "<artifactId>$1</artifactId>");
+                content = content.replaceAll("<name>([^<]+)-archetype</name>",
+                        "<name>$1</name>");
+                Files.writeString(archetypePomFile.toPath(), content);
+                System.out.println("Replaced archetype pom.xml");
+            }
+
             // project/target/generated-sources/archetype/main/archetype-resources/pom.xml
-            // pom.xmlの内容を置換
+            // の内容を置換
             File pomFile = new File(projectDir,
                     "target/generated-sources/archetype/src/main/resources/archetype-resources/pom.xml");
             if (pomFile.exists()) {
