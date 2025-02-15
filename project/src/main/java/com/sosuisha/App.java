@@ -21,7 +21,7 @@ public class App extends Application {
 
         // Build scene and stage to show View on the screen
         stage.setScene(mainScene);
-        stage.setTitle("${artifactId}");
+        stage.setTitle("MyApp");
         stage.show();
     }
 
