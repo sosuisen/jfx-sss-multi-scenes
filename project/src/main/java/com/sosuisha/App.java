@@ -11,12 +11,17 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         var mainLoader = new FXMLLoader(getClass().getResource("main.fxml"));
-        /*
-         * var mainController = (MainController) mainLoader.getController();
-         * mainController.initController(args);
-         */
+
+        // Get View
         var mainScene = new Scene(mainLoader.load(), 640, 480);
+
+        // Get Controller
+        var mainController = (MainController) mainLoader.getController();
+        mainController.initController();
+
+        // Build scene and stage to show View on the screen
         stage.setScene(mainScene);
+        stage.setTitle("${artifactId}");
         stage.show();
     }
 

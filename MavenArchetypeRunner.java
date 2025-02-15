@@ -21,6 +21,38 @@ public class MavenArchetypeRunner {
         // Maven コマンドと引数をリストに格納
         String os = System.getProperty("os.name").toLowerCase();
         boolean isWindows = os.contains("win");
+
+        // まず mvn clean を実行
+        List<String> cleanCommand = new ArrayList<>();
+        cleanCommand.add(isWindows ? "mvn.cmd" : "mvn");
+        cleanCommand.add("clean");
+
+        ProcessBuilder cleanPb = new ProcessBuilder(cleanCommand);
+        cleanPb.directory(projectDir);
+        cleanPb.redirectErrorStream(true);
+
+        try {
+            Process cleanProcess = cleanPb.start();
+            BufferedReader cleanReader = new BufferedReader(new InputStreamReader(cleanProcess.getInputStream()));
+            String line;
+            while ((line = cleanReader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            int cleanExitCode = cleanProcess.waitFor();
+            System.out.println(cleanCommand.toString() + " has been done. Exit code: " + cleanExitCode);
+
+            if (cleanExitCode != 0) {
+                System.err.println("mvn clean failed with exit code: " + cleanExitCode);
+                System.exit(1);
+            }
+        } catch (Exception e) {
+            System.err.println("mvn clean failed: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        // アーキタイプ生成コマンドを準備
         List<String> command = new ArrayList<>();
         command.add(isWindows ? "mvn.cmd" : "mvn");
         command.add("archetype:create-from-project");
@@ -134,24 +166,42 @@ public class MavenArchetypeRunner {
                             content = content.replaceAll("fx:controller=\"[^\"]+\\.([^\"]+)\"",
                                     "fx:controller=\"\\${package}.$1\"");
 
-                            // 新しい保存先のパスを作成
-                            Path newPath = directory.resolve(path.getFileName());
-
-                            // ファイルを新しい場所に書き込み
-                            Files.writeString(newPath, content);
-                            // 元のファイルを削除
-                            Files.delete(path);
-                            System.out.println("Moved and replaced " + path.getFileName());
-
+                            // 同じ場所に書き戻す
+                            Files.writeString(path, content);
+                            System.out.println("Replaced " + path.getFileName());
                         } catch (IOException e) {
                             throw new RuntimeException("FXMLファイルの処理中にエラーが発生しました: " + path, e);
                         }
                     });
         }
 
+        // すべての置換が終わった後でファイルを移動
+        try (Stream<Path> paths = Files.walk(directory)) {
+            paths.filter(path -> path.toString().endsWith(".fxml"))
+                    .forEach(path -> {
+                        try {
+                            // 新しい保存先のパスを作成
+                            Path newPath = directory.resolve(path.getFileName());
+                            // 移動先と同じ名前の場合はスキップ
+                            if (newPath.equals(path)) {
+                                return;
+                            }
+                            // ファイルが既にある場合は削除
+                            if (Files.exists(newPath)) {
+                                Files.delete(newPath);
+                            }
+                            // ファイルを新しい場所に移動
+                            Files.move(path, newPath);
+                            System.out.println("Moved " + path.getFileName());
+                        } catch (IOException e) {
+                            throw new RuntimeException("FXMLファイルの移動中にエラーが発生しました: " + path, e);
+                        }
+                    });
+        }
+
         // 空のディレクトリを削除
         try (Stream<Path> paths = Files.walk(directory, Integer.MAX_VALUE)) {
-            paths.sorted((a, b) -> b.compareTo(a)) // 逆順にソート（子から親の順）
+            paths.sorted((a, b) -> b.compareTo(a))
                     .filter(path -> {
                         try {
                             return Files.isDirectory(path) && Files.list(path).count() == 0;
