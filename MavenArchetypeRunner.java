@@ -85,6 +85,25 @@ public class MavenArchetypeRunner {
                 System.out.println("Replaced archetype-metadata.xml");
             }
 
+            // project\target\generated-sources\archetype\target\classes\archetype-resources\src\main\resources
+            // この場所にも.fxmlファイルが残っているので、再帰的に削除
+            Path targetClassesDir = projectDir.toPath()
+                    .resolve(
+                            "target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources");
+            if (Files.exists(targetClassesDir)) {
+                try (Stream<Path> paths = Files.walk(targetClassesDir)) {
+                    paths.sorted((a, b) -> b.compareTo(a)) // 逆順にソート（子から親の順）
+                            .forEach(path -> {
+                                try {
+                                    Files.delete(path);
+                                    System.out.println("Deleted: " + path);
+                                } catch (IOException e) {
+                                    System.err.println("ファイルの削除中にエラーが発生しました: " + path);
+                                }
+                            });
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

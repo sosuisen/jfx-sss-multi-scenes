@@ -1,4 +1,4 @@
-package com.sosuisha;
+package it.pkg;
 
 import java.io.IOException;
 
