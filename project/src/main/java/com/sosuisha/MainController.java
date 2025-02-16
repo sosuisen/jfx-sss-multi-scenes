@@ -3,8 +3,9 @@ package com.sosuisha;
 import javafx.fxml.FXML;
 
 public class MainController {
-    void initController() {
-        // TODO: Add init logic that is called from App.java.
+
+    public MainController(Model model) {
+        System.out.println(model.getMessage());
     }
 
     void initialize() {
