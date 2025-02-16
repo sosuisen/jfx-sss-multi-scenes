@@ -116,7 +116,7 @@ public class MavenArchetypeRunner {
             Path fxmlStartDir = projectDir.toPath()
                     .resolve(
                             "target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources");
-            processFxmlFiles(fxmlStartDir);
+            processResourceFiles(fxmlStartDir);
 
             // project\target\generated-sources\archetype\src\main\resources\META-INF\maven\archetype-metadata.xml
             // の内容を置換
@@ -125,8 +125,8 @@ public class MavenArchetypeRunner {
             if (archetypeMetadataFile.exists()) {
                 String content = Files.readString(archetypeMetadataFile.toPath());
                 content = content.replaceAll(
-                        "(<fileSet encoding=\"UTF-8\">\\s*<directory>src/main/resources</directory>\\s*<includes>\\s*<include>\\*\\*/\\*\\.fxml</include>\\s*</includes>\\s*</fileSet>)",
-                        "<fileSet filtered=\"true\" packaged=\"true\" encoding=\"UTF-8\"><directory>src/main/resources</directory><includes><include>**/*.fxml</include></includes></fileSet>");
+                        "(<fileSet encoding=\"UTF-8\">\\s*<directory>src/main/resources</directory>)",
+                        "<fileSet filtered=\"true\" packaged=\"true\" encoding=\"UTF-8\"><directory>src/main/resources</directory>");
                 Files.writeString(archetypeMetadataFile.toPath(), content);
                 System.out.println("Replaced archetype-metadata.xml");
             }
@@ -155,7 +155,7 @@ public class MavenArchetypeRunner {
         }
     }
 
-    static private void processFxmlFiles(Path directory) throws IOException {
+    static private void processResourceFiles(Path directory) throws IOException {
         try (Stream<Path> paths = Files.walk(directory)) {
             paths.filter(path -> path.toString().endsWith(".fxml"))
                     .forEach(path -> {
@@ -177,7 +177,7 @@ public class MavenArchetypeRunner {
 
         // すべての置換が終わった後でファイルを移動
         try (Stream<Path> paths = Files.walk(directory)) {
-            paths.filter(path -> path.toString().endsWith(".fxml"))
+            paths.filter(path -> !Files.isDirectory(path))
                     .forEach(path -> {
                         try {
                             // 新しい保存先のパスを作成
@@ -194,7 +194,7 @@ public class MavenArchetypeRunner {
                             Files.move(path, newPath);
                             System.out.println("Moved " + path.getFileName());
                         } catch (IOException e) {
-                            throw new RuntimeException("FXMLファイルの移動中にエラーが発生しました: " + path, e);
+                            throw new RuntimeException("ファイルの移動中にエラーが発生しました: " + path, e);
                         }
                     });
         }

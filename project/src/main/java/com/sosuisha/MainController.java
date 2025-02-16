@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class MainController {
+    @FXML
+    private Label titleLabel;
+
     private Model model;
 
     public MainController(Model model) {
@@ -12,6 +15,6 @@ public class MainController {
 
     public void initialize() {
         // TODO: Add init logic that is called after the FXML has been loaded.
-        System.out.println(model.getMessage());
+        titleLabel.setText(model.getMessage());
     }
 }

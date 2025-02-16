@@ -1,12 +1,10 @@
 package com.sosuisha;
 
-import lombok.Getter;
-
-@Getter
 public class Model {
-    private String message;
+    private String hello = "Hello";
+    private String world = "world";
 
-    public Model() {
-        this.message = "hello, world!";
+    public String getMessage() {
+        return hello + ", " + world + "!";
     }
 }
