@@ -12,21 +12,9 @@ public class App extends Application {
         // Model
         var model = new Model();
 
-        // View
-        var scene = new FxmlSceneBuilder("main.fxml")
-                .css("style.css")
-                .size(640, 480)
-                .controller(controllerClass -> {
-                    try {
-                        // Call the constructor specified by fx:controller in fxmlPath.
-                        return controllerClass.getDeclaredConstructor(Model.class).newInstance(model);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .build();
-        stage.setScene(scene);
-        stage.setTitle("MyApp");
+        var sceneManager = new SceneManager(stage, new String[] { "primary", "secondary" }, model);
+        sceneManager.switchScene("primary");
+
         stage.show();
     }
 
