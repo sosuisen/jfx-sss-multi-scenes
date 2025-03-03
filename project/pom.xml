@@ -5,7 +5,6 @@
   <groupId>io.github.sosuisen</groupId>
   <artifactId>jfx-sss-multi-scenes</artifactId>
   <version>1.0.0</version>
-  <name>${project.groupId}:${project.artifactId}</name>
   <description>JavaFX Archetype for multiple scenes</description>
   <url>https://github.com/sosuisen/</url>
   <licenses>
@@ -48,6 +47,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
         <configuration>
+          <release>${maven.compiler.release}</release>
           <annotationProcessorPaths>
             <path>
               <groupId>org.projectlombok</groupId>
